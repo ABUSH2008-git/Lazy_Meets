@@ -1,12 +1,3 @@
----
-title: LazyMeets
-colorFrom: blue
-colorTo: indigo
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # LazyMeets
 
 You give it a meeting recording, and it gives you back:
