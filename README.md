@@ -97,7 +97,16 @@ Nothing else is called. No analytics, no tracking.
 
 ## How to run it
 
-_Coming soon. We'll fill this in once the app is deployed._
+Choose the required process , i.e , upload a file or record the audio directly. To manage the token usage we have limited the uploaded file size to 200MB.
+
+Next press "Process Meeting" and let wait.
+
+Then you will get the following outputs , also available for download : 
+    1. Meeting records
+    2. Transcripts
+    3. Refinement Changes
+
+Under the meeting we will get : KEY DECISIONS , ACTION ITEMS , SUGGESTED follow-ups , Proposals not agreed , Open questions , Minutes
 
 ---
 
