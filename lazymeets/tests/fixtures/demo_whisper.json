@@ -1,0 +1,1825 @@
+{
+ "task": "transcribe",
+ "language": "English",
+ "duration": 124.67,
+ "text": "Okay, let's get started. This is the weekly sync for the payments platform. Arjun, Mira, thanks for joining. We have three things today: the latency issue, the caching plan, and the release on the 24th. Sure, so the P99 latency on the checkout API went up to 420 milliseconds last week. Most of it is coming from repeated post-gur SQL queries for the merchant config. Yes, I saw that in Grafana too. The P50 is fine, it's only the tail. Okay, Arjun, you had a proposal for caching. Right, I want to put Ridis in front of the Merchant Config table with a 5 minute TTL, in staging that brought the P99 down to 180 milliseconds. Five minutes is fine for config data, I'm okay with that. Great then let's go with riddies for the merchant config cache that's decided There was also the idea of moving the event pipeline to Kafka. I'd honestly like to do that, but not this quarter. We don't have the bandwidth. Agreed, we are not migrating to Kafka this quarter. Let's revisit it in January. Now, action items. Arjun, can you ship the Riddy's cash behind a feature flag by Thursday? Yes, I'll have it behind a flag by Thursday. And I'll write the rollback runbook for the cash Thanks. We also need to update the on-call rotation before the release. Yeah, someone should do that. And maybe Rohan could look into the flaky integration tests, but I'll have to ask him first. 1 open question: do we have budget for the extra GPU nodes for the fraud model? It's around $2,500 a month. I don't know yet, I'll check with finance, and get back to you by Monday One more thing. The Oauth token refresh bug is not blocking the release, so I'd keep it in the backlog. Fine, it stays in the backlog. Okay, the release is still on the 24th. Thanks, everyone. Thanks for watching!",
+ "segments": [
+  {
+   "id": 0,
+   "seek": 0,
+   "start": 0.81,
+   "end": 12.55,
+   "text": " Okay, let's get started. This is the weekly sync for the payments platform. Arjun, Mira, thanks for joining. We have three things today: the latency issue, the caching plan, and the release on the 24th.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 1,
+   "seek": 0,
+   "start": 13.61,
+   "end": 26.37,
+   "text": " Sure, so the P99 latency on the checkout API went up to 420 milliseconds last week. Most of it is coming from repeated post-gur SQL queries for the merchant config.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 2,
+   "seek": 0,
+   "start": 27.27,
+   "end": 32.0,
+   "text": " Yes, I saw that in Grafana too. The P50 is fine, it's only the tail.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 3,
+   "seek": 0,
+   "start": 32.71,
+   "end": 35.55,
+   "text": " Okay, Arjun, you had a proposal for caching.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 4,
+   "seek": 0,
+   "start": 36.33,
+   "end": 46.98,
+   "text": " Right, I want to put Ridis in front of the Merchant Config table with a 5 minute TTL, in staging that brought the P99 down to 180 milliseconds.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 5,
+   "seek": 0,
+   "start": 47.97,
+   "end": 51.55,
+   "text": " Five minutes is fine for config data, I'm okay with that.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 6,
+   "seek": 0,
+   "start": 52.2,
+   "end": 56.67,
+   "text": " Great then let's go with riddies for the merchant config cache that's decided",
+   "avg_logprob": -0.82,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 7,
+   "seek": 0,
+   "start": 57.64,
+   "end": 60.96,
+   "text": " There was also the idea of moving the event pipeline to Kafka.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 8,
+   "seek": 0,
+   "start": 61.96,
+   "end": 66.05,
+   "text": " I'd honestly like to do that, but not this quarter. We don't have the bandwidth.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 9,
+   "seek": 0,
+   "start": 66.89,
+   "end": 71.81,
+   "text": " Agreed, we are not migrating to Kafka this quarter. Let's revisit it in January.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 10,
+   "seek": 0,
+   "start": 72.29,
+   "end": 77.73,
+   "text": " Now, action items. Arjun, can you ship the Riddy's cash behind a feature flag by Thursday?",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 11,
+   "seek": 0,
+   "start": 78.47,
+   "end": 81.19,
+   "text": " Yes, I'll have it behind a flag by Thursday.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 12,
+   "seek": 0,
+   "start": 81.86,
+   "end": 84.29,
+   "text": " And I'll write the rollback runbook for the cash",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 13,
+   "seek": 0,
+   "start": 85.19,
+   "end": 89.28,
+   "text": " Thanks. We also need to update the on-call rotation before the release.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 14,
+   "seek": 0,
+   "start": 90.12,
+   "end": 91.46,
+   "text": " Yeah, someone should do that.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 15,
+   "seek": 0,
+   "start": 92.29,
+   "end": 96.9,
+   "text": " And maybe Rohan could look into the flaky integration tests, but I'll have to ask him first.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 16,
+   "seek": 0,
+   "start": 97.93,
+   "end": 105.22,
+   "text": " 1 open question: do we have budget for the extra GPU nodes for the fraud model? It's around $2,500 a month.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 17,
+   "seek": 0,
+   "start": 106.25,
+   "end": 110.02,
+   "text": " I don't know yet, I'll check with finance, and get back to you by Monday",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 18,
+   "seek": 0,
+   "start": 110.98,
+   "end": 117.31,
+   "text": " One more thing. The Oauth token refresh bug is not blocking the release, so I'd keep it in the backlog.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 19,
+   "seek": 0,
+   "start": 118.53,
+   "end": 123.78,
+   "text": " Fine, it stays in the backlog. Okay, the release is still on the 24th. Thanks, everyone.",
+   "avg_logprob": -0.18,
+   "compression_ratio": 1.4,
+   "no_speech_prob": 0.01
+  },
+  {
+   "id": 20,
+   "seek": 0,
+   "start": 124.0,
+   "end": 124.6,
+   "text": " Thanks for watching!",
+   "avg_logprob": -0.9,
+   "compression_ratio": 0.8,
+   "no_speech_prob": 0.7
+  }
+ ],
+ "words": [
+  {
+   "word": "Okay",
+   "start": 0.81,
+   "end": 1.14
+  },
+  {
+   "word": "let's",
+   "start": 1.14,
+   "end": 1.48
+  },
+  {
+   "word": "get",
+   "start": 1.48,
+   "end": 1.81
+  },
+  {
+   "word": "started",
+   "start": 1.81,
+   "end": 2.15
+  },
+  {
+   "word": "This",
+   "start": 2.15,
+   "end": 2.48
+  },
+  {
+   "word": "is",
+   "start": 2.48,
+   "end": 2.82
+  },
+  {
+   "word": "the",
+   "start": 2.82,
+   "end": 3.15
+  },
+  {
+   "word": "weekly",
+   "start": 3.15,
+   "end": 3.49
+  },
+  {
+   "word": "sync",
+   "start": 3.49,
+   "end": 3.82
+  },
+  {
+   "word": "for",
+   "start": 3.82,
+   "end": 4.16
+  },
+  {
+   "word": "the",
+   "start": 4.16,
+   "end": 4.5
+  },
+  {
+   "word": "payments",
+   "start": 4.5,
+   "end": 4.83
+  },
+  {
+   "word": "platform",
+   "start": 4.83,
+   "end": 5.17
+  },
+  {
+   "word": "Arjun",
+   "start": 5.17,
+   "end": 5.5
+  },
+  {
+   "word": "Mira",
+   "start": 5.5,
+   "end": 5.84
+  },
+  {
+   "word": "thanks",
+   "start": 5.84,
+   "end": 6.17
+  },
+  {
+   "word": "for",
+   "start": 6.17,
+   "end": 6.51
+  },
+  {
+   "word": "joining",
+   "start": 6.51,
+   "end": 6.84
+  },
+  {
+   "word": "We",
+   "start": 6.84,
+   "end": 7.18
+  },
+  {
+   "word": "have",
+   "start": 7.18,
+   "end": 7.51
+  },
+  {
+   "word": "three",
+   "start": 7.51,
+   "end": 7.85
+  },
+  {
+   "word": "things",
+   "start": 7.85,
+   "end": 8.19
+  },
+  {
+   "word": "today",
+   "start": 8.19,
+   "end": 8.52
+  },
+  {
+   "word": "the",
+   "start": 8.52,
+   "end": 8.86
+  },
+  {
+   "word": "latency",
+   "start": 8.86,
+   "end": 9.19
+  },
+  {
+   "word": "issue",
+   "start": 9.19,
+   "end": 9.53
+  },
+  {
+   "word": "the",
+   "start": 9.53,
+   "end": 9.86
+  },
+  {
+   "word": "caching",
+   "start": 9.86,
+   "end": 10.2
+  },
+  {
+   "word": "plan",
+   "start": 10.2,
+   "end": 10.53
+  },
+  {
+   "word": "and",
+   "start": 10.53,
+   "end": 10.87
+  },
+  {
+   "word": "the",
+   "start": 10.87,
+   "end": 11.2
+  },
+  {
+   "word": "release",
+   "start": 11.2,
+   "end": 11.54
+  },
+  {
+   "word": "on",
+   "start": 11.54,
+   "end": 11.88
+  },
+  {
+   "word": "the",
+   "start": 11.88,
+   "end": 12.21
+  },
+  {
+   "word": "24th",
+   "start": 12.21,
+   "end": 12.55
+  },
+  {
+   "word": "Sure",
+   "start": 13.61,
+   "end": 14.03
+  },
+  {
+   "word": "so",
+   "start": 14.03,
+   "end": 14.46
+  },
+  {
+   "word": "the",
+   "start": 14.46,
+   "end": 14.88
+  },
+  {
+   "word": "P99",
+   "start": 14.88,
+   "end": 15.31
+  },
+  {
+   "word": "latency",
+   "start": 15.31,
+   "end": 15.73
+  },
+  {
+   "word": "on",
+   "start": 15.73,
+   "end": 16.16
+  },
+  {
+   "word": "the",
+   "start": 16.16,
+   "end": 16.58
+  },
+  {
+   "word": "checkout",
+   "start": 16.58,
+   "end": 17.01
+  },
+  {
+   "word": "API",
+   "start": 17.01,
+   "end": 17.44
+  },
+  {
+   "word": "went",
+   "start": 17.44,
+   "end": 17.86
+  },
+  {
+   "word": "up",
+   "start": 17.86,
+   "end": 18.29
+  },
+  {
+   "word": "to",
+   "start": 18.29,
+   "end": 18.71
+  },
+  {
+   "word": "420",
+   "start": 18.71,
+   "end": 19.14
+  },
+  {
+   "word": "milliseconds",
+   "start": 19.14,
+   "end": 19.56
+  },
+  {
+   "word": "last",
+   "start": 19.56,
+   "end": 19.99
+  },
+  {
+   "word": "week",
+   "start": 19.99,
+   "end": 20.41
+  },
+  {
+   "word": "Most",
+   "start": 20.41,
+   "end": 20.84
+  },
+  {
+   "word": "of",
+   "start": 20.84,
+   "end": 21.26
+  },
+  {
+   "word": "it",
+   "start": 21.26,
+   "end": 21.69
+  },
+  {
+   "word": "is",
+   "start": 21.69,
+   "end": 22.12
+  },
+  {
+   "word": "coming",
+   "start": 22.12,
+   "end": 22.54
+  },
+  {
+   "word": "from",
+   "start": 22.54,
+   "end": 22.97
+  },
+  {
+   "word": "repeated",
+   "start": 22.97,
+   "end": 23.39
+  },
+  {
+   "word": "post-gur",
+   "start": 23.39,
+   "end": 23.82
+  },
+  {
+   "word": "SQL",
+   "start": 23.82,
+   "end": 24.24
+  },
+  {
+   "word": "queries",
+   "start": 24.24,
+   "end": 24.67
+  },
+  {
+   "word": "for",
+   "start": 24.67,
+   "end": 25.09
+  },
+  {
+   "word": "the",
+   "start": 25.09,
+   "end": 25.52
+  },
+  {
+   "word": "merchant",
+   "start": 25.52,
+   "end": 25.94
+  },
+  {
+   "word": "config",
+   "start": 25.94,
+   "end": 26.37
+  },
+  {
+   "word": "Yes",
+   "start": 27.27,
+   "end": 27.59
+  },
+  {
+   "word": "I",
+   "start": 27.59,
+   "end": 27.9
+  },
+  {
+   "word": "saw",
+   "start": 27.9,
+   "end": 28.22
+  },
+  {
+   "word": "that",
+   "start": 28.22,
+   "end": 28.53
+  },
+  {
+   "word": "in",
+   "start": 28.53,
+   "end": 28.85
+  },
+  {
+   "word": "Grafana",
+   "start": 28.85,
+   "end": 29.16
+  },
+  {
+   "word": "too",
+   "start": 29.16,
+   "end": 29.48
+  },
+  {
+   "word": "The",
+   "start": 29.48,
+   "end": 29.79
+  },
+  {
+   "word": "P50",
+   "start": 29.79,
+   "end": 30.11
+  },
+  {
+   "word": "is",
+   "start": 30.11,
+   "end": 30.42
+  },
+  {
+   "word": "fine",
+   "start": 30.42,
+   "end": 30.74
+  },
+  {
+   "word": "it's",
+   "start": 30.74,
+   "end": 31.06
+  },
+  {
+   "word": "only",
+   "start": 31.06,
+   "end": 31.37
+  },
+  {
+   "word": "the",
+   "start": 31.37,
+   "end": 31.69
+  },
+  {
+   "word": "tail",
+   "start": 31.69,
+   "end": 32.0
+  },
+  {
+   "word": "Okay",
+   "start": 32.71,
+   "end": 33.07
+  },
+  {
+   "word": "Arjun",
+   "start": 33.07,
+   "end": 33.42
+  },
+  {
+   "word": "you",
+   "start": 33.42,
+   "end": 33.78
+  },
+  {
+   "word": "had",
+   "start": 33.78,
+   "end": 34.13
+  },
+  {
+   "word": "a",
+   "start": 34.13,
+   "end": 34.49
+  },
+  {
+   "word": "proposal",
+   "start": 34.49,
+   "end": 34.84
+  },
+  {
+   "word": "for",
+   "start": 34.84,
+   "end": 35.2
+  },
+  {
+   "word": "caching",
+   "start": 35.2,
+   "end": 35.55
+  },
+  {
+   "word": "Right",
+   "start": 36.33,
+   "end": 36.71
+  },
+  {
+   "word": "I",
+   "start": 36.71,
+   "end": 37.09
+  },
+  {
+   "word": "want",
+   "start": 37.09,
+   "end": 37.47
+  },
+  {
+   "word": "to",
+   "start": 37.47,
+   "end": 37.85
+  },
+  {
+   "word": "put",
+   "start": 37.85,
+   "end": 38.23
+  },
+  {
+   "word": "Ridis",
+   "start": 38.23,
+   "end": 38.61
+  },
+  {
+   "word": "in",
+   "start": 38.61,
+   "end": 38.99
+  },
+  {
+   "word": "front",
+   "start": 38.99,
+   "end": 39.37
+  },
+  {
+   "word": "of",
+   "start": 39.37,
+   "end": 39.75
+  },
+  {
+   "word": "the",
+   "start": 39.75,
+   "end": 40.13
+  },
+  {
+   "word": "Merchant",
+   "start": 40.13,
+   "end": 40.51
+  },
+  {
+   "word": "Config",
+   "start": 40.51,
+   "end": 40.89
+  },
+  {
+   "word": "table",
+   "start": 40.89,
+   "end": 41.27
+  },
+  {
+   "word": "with",
+   "start": 41.27,
+   "end": 41.65
+  },
+  {
+   "word": "a",
+   "start": 41.65,
+   "end": 42.03
+  },
+  {
+   "word": "5",
+   "start": 42.03,
+   "end": 42.41
+  },
+  {
+   "word": "minute",
+   "start": 42.41,
+   "end": 42.79
+  },
+  {
+   "word": "TTL",
+   "start": 42.79,
+   "end": 43.17
+  },
+  {
+   "word": "in",
+   "start": 43.17,
+   "end": 43.55
+  },
+  {
+   "word": "staging",
+   "start": 43.55,
+   "end": 43.93
+  },
+  {
+   "word": "that",
+   "start": 43.93,
+   "end": 44.31
+  },
+  {
+   "word": "brought",
+   "start": 44.31,
+   "end": 44.7
+  },
+  {
+   "word": "the",
+   "start": 44.7,
+   "end": 45.08
+  },
+  {
+   "word": "P99",
+   "start": 45.08,
+   "end": 45.46
+  },
+  {
+   "word": "down",
+   "start": 45.46,
+   "end": 45.84
+  },
+  {
+   "word": "to",
+   "start": 45.84,
+   "end": 46.22
+  },
+  {
+   "word": "180",
+   "start": 46.22,
+   "end": 46.6
+  },
+  {
+   "word": "milliseconds",
+   "start": 46.6,
+   "end": 46.98
+  },
+  {
+   "word": "Five",
+   "start": 47.97,
+   "end": 48.3
+  },
+  {
+   "word": "minutes",
+   "start": 48.3,
+   "end": 48.62
+  },
+  {
+   "word": "is",
+   "start": 48.62,
+   "end": 48.95
+  },
+  {
+   "word": "fine",
+   "start": 48.95,
+   "end": 49.28
+  },
+  {
+   "word": "for",
+   "start": 49.28,
+   "end": 49.6
+  },
+  {
+   "word": "config",
+   "start": 49.6,
+   "end": 49.93
+  },
+  {
+   "word": "data",
+   "start": 49.93,
+   "end": 50.25
+  },
+  {
+   "word": "I'm",
+   "start": 50.25,
+   "end": 50.58
+  },
+  {
+   "word": "okay",
+   "start": 50.58,
+   "end": 50.9
+  },
+  {
+   "word": "with",
+   "start": 50.9,
+   "end": 51.23
+  },
+  {
+   "word": "that",
+   "start": 51.23,
+   "end": 51.55
+  },
+  {
+   "word": "Great",
+   "start": 52.2,
+   "end": 52.54
+  },
+  {
+   "word": "then",
+   "start": 52.54,
+   "end": 52.89
+  },
+  {
+   "word": "let's",
+   "start": 52.89,
+   "end": 53.23
+  },
+  {
+   "word": "go",
+   "start": 53.23,
+   "end": 53.58
+  },
+  {
+   "word": "with",
+   "start": 53.58,
+   "end": 53.92
+  },
+  {
+   "word": "riddies",
+   "start": 53.92,
+   "end": 54.26
+  },
+  {
+   "word": "for",
+   "start": 54.26,
+   "end": 54.61
+  },
+  {
+   "word": "the",
+   "start": 54.61,
+   "end": 54.95
+  },
+  {
+   "word": "merchant",
+   "start": 54.95,
+   "end": 55.3
+  },
+  {
+   "word": "config",
+   "start": 55.3,
+   "end": 55.64
+  },
+  {
+   "word": "cache",
+   "start": 55.64,
+   "end": 55.99
+  },
+  {
+   "word": "that's",
+   "start": 55.99,
+   "end": 56.33
+  },
+  {
+   "word": "decided",
+   "start": 56.33,
+   "end": 56.67
+  },
+  {
+   "word": "There",
+   "start": 57.64,
+   "end": 57.91
+  },
+  {
+   "word": "was",
+   "start": 57.91,
+   "end": 58.19
+  },
+  {
+   "word": "also",
+   "start": 58.19,
+   "end": 58.47
+  },
+  {
+   "word": "the",
+   "start": 58.47,
+   "end": 58.75
+  },
+  {
+   "word": "idea",
+   "start": 58.75,
+   "end": 59.02
+  },
+  {
+   "word": "of",
+   "start": 59.02,
+   "end": 59.3
+  },
+  {
+   "word": "moving",
+   "start": 59.3,
+   "end": 59.58
+  },
+  {
+   "word": "the",
+   "start": 59.58,
+   "end": 59.85
+  },
+  {
+   "word": "event",
+   "start": 59.85,
+   "end": 60.13
+  },
+  {
+   "word": "pipeline",
+   "start": 60.13,
+   "end": 60.41
+  },
+  {
+   "word": "to",
+   "start": 60.41,
+   "end": 60.68
+  },
+  {
+   "word": "Kafka",
+   "start": 60.68,
+   "end": 60.96
+  },
+  {
+   "word": "I'd",
+   "start": 61.96,
+   "end": 62.23
+  },
+  {
+   "word": "honestly",
+   "start": 62.23,
+   "end": 62.5
+  },
+  {
+   "word": "like",
+   "start": 62.5,
+   "end": 62.78
+  },
+  {
+   "word": "to",
+   "start": 62.78,
+   "end": 63.05
+  },
+  {
+   "word": "do",
+   "start": 63.05,
+   "end": 63.32
+  },
+  {
+   "word": "that",
+   "start": 63.32,
+   "end": 63.59
+  },
+  {
+   "word": "but",
+   "start": 63.59,
+   "end": 63.87
+  },
+  {
+   "word": "not",
+   "start": 63.87,
+   "end": 64.14
+  },
+  {
+   "word": "this",
+   "start": 64.14,
+   "end": 64.41
+  },
+  {
+   "word": "quarter",
+   "start": 64.41,
+   "end": 64.69
+  },
+  {
+   "word": "We",
+   "start": 64.69,
+   "end": 64.96
+  },
+  {
+   "word": "don't",
+   "start": 64.96,
+   "end": 65.23
+  },
+  {
+   "word": "have",
+   "start": 65.23,
+   "end": 65.5
+  },
+  {
+   "word": "the",
+   "start": 65.5,
+   "end": 65.78
+  },
+  {
+   "word": "bandwidth",
+   "start": 65.78,
+   "end": 66.05
+  },
+  {
+   "word": "Agreed",
+   "start": 66.89,
+   "end": 67.24
+  },
+  {
+   "word": "we",
+   "start": 67.24,
+   "end": 67.59
+  },
+  {
+   "word": "are",
+   "start": 67.59,
+   "end": 67.94
+  },
+  {
+   "word": "not",
+   "start": 67.94,
+   "end": 68.29
+  },
+  {
+   "word": "migrating",
+   "start": 68.29,
+   "end": 68.64
+  },
+  {
+   "word": "to",
+   "start": 68.64,
+   "end": 69.0
+  },
+  {
+   "word": "Kafka",
+   "start": 69.0,
+   "end": 69.35
+  },
+  {
+   "word": "this",
+   "start": 69.35,
+   "end": 69.7
+  },
+  {
+   "word": "quarter",
+   "start": 69.7,
+   "end": 70.05
+  },
+  {
+   "word": "Let's",
+   "start": 70.05,
+   "end": 70.4
+  },
+  {
+   "word": "revisit",
+   "start": 70.4,
+   "end": 70.75
+  },
+  {
+   "word": "it",
+   "start": 70.75,
+   "end": 71.11
+  },
+  {
+   "word": "in",
+   "start": 71.11,
+   "end": 71.46
+  },
+  {
+   "word": "January",
+   "start": 71.46,
+   "end": 71.81
+  },
+  {
+   "word": "Now",
+   "start": 72.29,
+   "end": 72.63
+  },
+  {
+   "word": "action",
+   "start": 72.63,
+   "end": 72.97
+  },
+  {
+   "word": "items",
+   "start": 72.97,
+   "end": 73.31
+  },
+  {
+   "word": "Arjun",
+   "start": 73.31,
+   "end": 73.65
+  },
+  {
+   "word": "can",
+   "start": 73.65,
+   "end": 73.99
+  },
+  {
+   "word": "you",
+   "start": 73.99,
+   "end": 74.33
+  },
+  {
+   "word": "ship",
+   "start": 74.33,
+   "end": 74.67
+  },
+  {
+   "word": "the",
+   "start": 74.67,
+   "end": 75.01
+  },
+  {
+   "word": "Riddy's",
+   "start": 75.01,
+   "end": 75.35
+  },
+  {
+   "word": "cash",
+   "start": 75.35,
+   "end": 75.69
+  },
+  {
+   "word": "behind",
+   "start": 75.69,
+   "end": 76.03
+  },
+  {
+   "word": "a",
+   "start": 76.03,
+   "end": 76.37
+  },
+  {
+   "word": "feature",
+   "start": 76.37,
+   "end": 76.71
+  },
+  {
+   "word": "flag",
+   "start": 76.71,
+   "end": 77.05
+  },
+  {
+   "word": "by",
+   "start": 77.05,
+   "end": 77.39
+  },
+  {
+   "word": "Thursday",
+   "start": 77.39,
+   "end": 77.73
+  },
+  {
+   "word": "Yes",
+   "start": 78.47,
+   "end": 78.77
+  },
+  {
+   "word": "I'll",
+   "start": 78.77,
+   "end": 79.07
+  },
+  {
+   "word": "have",
+   "start": 79.07,
+   "end": 79.38
+  },
+  {
+   "word": "it",
+   "start": 79.38,
+   "end": 79.68
+  },
+  {
+   "word": "behind",
+   "start": 79.68,
+   "end": 79.98
+  },
+  {
+   "word": "a",
+   "start": 79.98,
+   "end": 80.28
+  },
+  {
+   "word": "flag",
+   "start": 80.28,
+   "end": 80.58
+  },
+  {
+   "word": "by",
+   "start": 80.58,
+   "end": 80.88
+  },
+  {
+   "word": "Thursday",
+   "start": 80.88,
+   "end": 81.19
+  },
+  {
+   "word": "And",
+   "start": 81.86,
+   "end": 82.13
+  },
+  {
+   "word": "I'll",
+   "start": 82.13,
+   "end": 82.4
+  },
+  {
+   "word": "write",
+   "start": 82.4,
+   "end": 82.67
+  },
+  {
+   "word": "the",
+   "start": 82.67,
+   "end": 82.94
+  },
+  {
+   "word": "rollback",
+   "start": 82.94,
+   "end": 83.21
+  },
+  {
+   "word": "runbook",
+   "start": 83.21,
+   "end": 83.48
+  },
+  {
+   "word": "for",
+   "start": 83.48,
+   "end": 83.75
+  },
+  {
+   "word": "the",
+   "start": 83.75,
+   "end": 84.02
+  },
+  {
+   "word": "cash",
+   "start": 84.02,
+   "end": 84.29
+  },
+  {
+   "word": "Thanks",
+   "start": 85.19,
+   "end": 85.53
+  },
+  {
+   "word": "We",
+   "start": 85.53,
+   "end": 85.87
+  },
+  {
+   "word": "also",
+   "start": 85.87,
+   "end": 86.21
+  },
+  {
+   "word": "need",
+   "start": 86.21,
+   "end": 86.55
+  },
+  {
+   "word": "to",
+   "start": 86.55,
+   "end": 86.89
+  },
+  {
+   "word": "update",
+   "start": 86.89,
+   "end": 87.24
+  },
+  {
+   "word": "the",
+   "start": 87.24,
+   "end": 87.58
+  },
+  {
+   "word": "on-call",
+   "start": 87.58,
+   "end": 87.92
+  },
+  {
+   "word": "rotation",
+   "start": 87.92,
+   "end": 88.26
+  },
+  {
+   "word": "before",
+   "start": 88.26,
+   "end": 88.6
+  },
+  {
+   "word": "the",
+   "start": 88.6,
+   "end": 88.94
+  },
+  {
+   "word": "release",
+   "start": 88.94,
+   "end": 89.28
+  },
+  {
+   "word": "Yeah",
+   "start": 90.12,
+   "end": 90.39
+  },
+  {
+   "word": "someone",
+   "start": 90.39,
+   "end": 90.65
+  },
+  {
+   "word": "should",
+   "start": 90.65,
+   "end": 90.92
+  },
+  {
+   "word": "do",
+   "start": 90.92,
+   "end": 91.19
+  },
+  {
+   "word": "that",
+   "start": 91.19,
+   "end": 91.46
+  },
+  {
+   "word": "And",
+   "start": 92.29,
+   "end": 92.56
+  },
+  {
+   "word": "maybe",
+   "start": 92.56,
+   "end": 92.84
+  },
+  {
+   "word": "Rohan",
+   "start": 92.84,
+   "end": 93.11
+  },
+  {
+   "word": "could",
+   "start": 93.11,
+   "end": 93.38
+  },
+  {
+   "word": "look",
+   "start": 93.38,
+   "end": 93.65
+  },
+  {
+   "word": "into",
+   "start": 93.65,
+   "end": 93.92
+  },
+  {
+   "word": "the",
+   "start": 93.92,
+   "end": 94.19
+  },
+  {
+   "word": "flaky",
+   "start": 94.19,
+   "end": 94.46
+  },
+  {
+   "word": "integration",
+   "start": 94.46,
+   "end": 94.73
+  },
+  {
+   "word": "tests",
+   "start": 94.73,
+   "end": 95.0
+  },
+  {
+   "word": "but",
+   "start": 95.0,
+   "end": 95.27
+  },
+  {
+   "word": "I'll",
+   "start": 95.27,
+   "end": 95.54
+  },
+  {
+   "word": "have",
+   "start": 95.54,
+   "end": 95.81
+  },
+  {
+   "word": "to",
+   "start": 95.81,
+   "end": 96.09
+  },
+  {
+   "word": "ask",
+   "start": 96.09,
+   "end": 96.36
+  },
+  {
+   "word": "him",
+   "start": 96.36,
+   "end": 96.63
+  },
+  {
+   "word": "first",
+   "start": 96.63,
+   "end": 96.9
+  },
+  {
+   "word": "1",
+   "start": 97.93,
+   "end": 98.27
+  },
+  {
+   "word": "open",
+   "start": 98.27,
+   "end": 98.62
+  },
+  {
+   "word": "question",
+   "start": 98.62,
+   "end": 98.97
+  },
+  {
+   "word": "do",
+   "start": 98.97,
+   "end": 99.31
+  },
+  {
+   "word": "we",
+   "start": 99.31,
+   "end": 99.66
+  },
+  {
+   "word": "have",
+   "start": 99.66,
+   "end": 100.01
+  },
+  {
+   "word": "budget",
+   "start": 100.01,
+   "end": 100.36
+  },
+  {
+   "word": "for",
+   "start": 100.36,
+   "end": 100.7
+  },
+  {
+   "word": "the",
+   "start": 100.7,
+   "end": 101.05
+  },
+  {
+   "word": "extra",
+   "start": 101.05,
+   "end": 101.4
+  },
+  {
+   "word": "GPU",
+   "start": 101.4,
+   "end": 101.75
+  },
+  {
+   "word": "nodes",
+   "start": 101.75,
+   "end": 102.09
+  },
+  {
+   "word": "for",
+   "start": 102.09,
+   "end": 102.44
+  },
+  {
+   "word": "the",
+   "start": 102.44,
+   "end": 102.79
+  },
+  {
+   "word": "fraud",
+   "start": 102.79,
+   "end": 103.13
+  },
+  {
+   "word": "model",
+   "start": 103.13,
+   "end": 103.48
+  },
+  {
+   "word": "It's",
+   "start": 103.48,
+   "end": 103.83
+  },
+  {
+   "word": "around",
+   "start": 103.83,
+   "end": 104.18
+  },
+  {
+   "word": "$2,500",
+   "start": 104.18,
+   "end": 104.52
+  },
+  {
+   "word": "a",
+   "start": 104.52,
+   "end": 104.87
+  },
+  {
+   "word": "month",
+   "start": 104.87,
+   "end": 105.22
+  },
+  {
+   "word": "I",
+   "start": 106.25,
+   "end": 106.5
+  },
+  {
+   "word": "don't",
+   "start": 106.5,
+   "end": 106.75
+  },
+  {
+   "word": "know",
+   "start": 106.75,
+   "end": 107.0
+  },
+  {
+   "word": "yet",
+   "start": 107.0,
+   "end": 107.25
+  },
+  {
+   "word": "I'll",
+   "start": 107.25,
+   "end": 107.5
+  },
+  {
+   "word": "check",
+   "start": 107.5,
+   "end": 107.75
+  },
+  {
+   "word": "with",
+   "start": 107.75,
+   "end": 108.01
+  },
+  {
+   "word": "finance",
+   "start": 108.01,
+   "end": 108.26
+  },
+  {
+   "word": "and",
+   "start": 108.26,
+   "end": 108.51
+  },
+  {
+   "word": "get",
+   "start": 108.51,
+   "end": 108.76
+  },
+  {
+   "word": "back",
+   "start": 108.76,
+   "end": 109.01
+  },
+  {
+   "word": "to",
+   "start": 109.01,
+   "end": 109.26
+  },
+  {
+   "word": "you",
+   "start": 109.26,
+   "end": 109.52
+  },
+  {
+   "word": "by",
+   "start": 109.52,
+   "end": 109.77
+  },
+  {
+   "word": "Monday",
+   "start": 109.77,
+   "end": 110.02
+  },
+  {
+   "word": "One",
+   "start": 110.98,
+   "end": 111.3
+  },
+  {
+   "word": "more",
+   "start": 111.3,
+   "end": 111.62
+  },
+  {
+   "word": "thing",
+   "start": 111.62,
+   "end": 111.93
+  },
+  {
+   "word": "The",
+   "start": 111.93,
+   "end": 112.25
+  },
+  {
+   "word": "Oauth",
+   "start": 112.25,
+   "end": 112.56
+  },
+  {
+   "word": "token",
+   "start": 112.56,
+   "end": 112.88
+  },
+  {
+   "word": "refresh",
+   "start": 112.88,
+   "end": 113.2
+  },
+  {
+   "word": "bug",
+   "start": 113.2,
+   "end": 113.51
+  },
+  {
+   "word": "is",
+   "start": 113.51,
+   "end": 113.83
+  },
+  {
+   "word": "not",
+   "start": 113.83,
+   "end": 114.15
+  },
+  {
+   "word": "blocking",
+   "start": 114.15,
+   "end": 114.46
+  },
+  {
+   "word": "the",
+   "start": 114.46,
+   "end": 114.78
+  },
+  {
+   "word": "release",
+   "start": 114.78,
+   "end": 115.1
+  },
+  {
+   "word": "so",
+   "start": 115.1,
+   "end": 115.41
+  },
+  {
+   "word": "I'd",
+   "start": 115.41,
+   "end": 115.73
+  },
+  {
+   "word": "keep",
+   "start": 115.73,
+   "end": 116.05
+  },
+  {
+   "word": "it",
+   "start": 116.05,
+   "end": 116.36
+  },
+  {
+   "word": "in",
+   "start": 116.36,
+   "end": 116.68
+  },
+  {
+   "word": "the",
+   "start": 116.68,
+   "end": 117.0
+  },
+  {
+   "word": "backlog",
+   "start": 117.0,
+   "end": 117.31
+  },
+  {
+   "word": "Fine",
+   "start": 118.53,
+   "end": 118.86
+  },
+  {
+   "word": "it",
+   "start": 118.86,
+   "end": 119.19
+  },
+  {
+   "word": "stays",
+   "start": 119.19,
+   "end": 119.52
+  },
+  {
+   "word": "in",
+   "start": 119.52,
+   "end": 119.84
+  },
+  {
+   "word": "the",
+   "start": 119.84,
+   "end": 120.17
+  },
+  {
+   "word": "backlog",
+   "start": 120.17,
+   "end": 120.5
+  },
+  {
+   "word": "Okay",
+   "start": 120.5,
+   "end": 120.83
+  },
+  {
+   "word": "the",
+   "start": 120.83,
+   "end": 121.16
+  },
+  {
+   "word": "release",
+   "start": 121.16,
+   "end": 121.48
+  },
+  {
+   "word": "is",
+   "start": 121.48,
+   "end": 121.81
+  },
+  {
+   "word": "still",
+   "start": 121.81,
+   "end": 122.14
+  },
+  {
+   "word": "on",
+   "start": 122.14,
+   "end": 122.47
+  },
+  {
+   "word": "the",
+   "start": 122.47,
+   "end": 122.79
+  },
+  {
+   "word": "24th",
+   "start": 122.79,
+   "end": 123.12
+  },
+  {
+   "word": "Thanks",
+   "start": 123.12,
+   "end": 123.45
+  },
+  {
+   "word": "everyone",
+   "start": 123.45,
+   "end": 123.78
+  }
+ ]
+}

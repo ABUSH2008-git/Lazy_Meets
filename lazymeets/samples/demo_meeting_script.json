@@ -1,0 +1,56 @@
+{
+  "title": "Payments platform weekly sync",
+  "speakers": {
+    "Priya": {"kokoro_sid": 1},
+    "Arjun": {"kokoro_sid": 6},
+    "Meera": {"kokoro_sid": 7}
+  },
+  "turns": [
+    {"speaker": "Priya", "text": "Okay, let's get started. This is the weekly sync for the payments platform. Arjun, Meera, thanks for joining. We have three things today: the latency issue, the caching plan, and the release on the twenty-fourth."},
+    {"speaker": "Arjun", "text": "Sure. So the p99 latency on the checkout API went up to four hundred and twenty milliseconds last week. Most of it is coming from repeated PostgreSQL queries for the merchant config."},
+    {"speaker": "Meera", "text": "Yeah, I saw that in Grafana too. The p50 is fine, it's only the tail."},
+    {"speaker": "Priya", "text": "Okay. Arjun, you had a proposal for caching?"},
+    {"speaker": "Arjun", "text": "Right. I want to put Redis in front of the merchant config table, with a five minute TTL. In staging, that brought the p99 down to one hundred and eighty milliseconds."},
+    {"speaker": "Meera", "text": "Five minutes is fine for config data. I'm okay with that."},
+    {"speaker": "Priya", "text": "Great. Then let's go with Redis for the merchant config cache. That's decided."},
+    {"speaker": "Meera", "text": "There was also the idea of moving the event pipeline to Kafka."},
+    {"speaker": "Arjun", "text": "I'd honestly like to do that, but not this quarter. We don't have the bandwidth."},
+    {"speaker": "Priya", "text": "Agreed. We are not migrating to Kafka this quarter. Let's revisit it in January."},
+    {"speaker": "Priya", "text": "Now, action items. Arjun, can you ship the Redis cache behind a feature flag by Thursday?"},
+    {"speaker": "Arjun", "text": "Yes, I'll have it behind a flag by Thursday."},
+    {"speaker": "Meera", "text": "And I'll write the rollback runbook for the cache."},
+    {"speaker": "Priya", "text": "Thanks. We also need to update the on-call rotation before the release."},
+    {"speaker": "Arjun", "text": "Yeah, someone should do that."},
+    {"speaker": "Priya", "text": "And maybe Rohan could look into the flaky integration tests, but I'll have to ask him first."},
+    {"speaker": "Meera", "text": "One open question. Do we have budget for the extra GPU nodes for the fraud model? It's around two thousand five hundred dollars a month."},
+    {"speaker": "Priya", "text": "I don't know yet. I'll check with finance and get back to you by Monday."},
+    {"speaker": "Arjun", "text": "One more thing. The OAuth token refresh bug is not blocking the release, so I'd keep it in the backlog."},
+    {"speaker": "Priya", "text": "Fine, it stays in the backlog. Okay, the release is still on the twenty-fourth. Thanks, everyone."}
+  ],
+  "expected": {
+    "decisions": [
+      "Use Redis as a cache in front of the merchant config table (5-minute TTL)",
+      "Do not migrate the event pipeline to Kafka this quarter; revisit in January",
+      "Keep the OAuth token refresh bug in the backlog (not blocking the release)"
+    ],
+    "not_agreed": [
+      "Move the event pipeline to Kafka (deferred to January)"
+    ],
+    "action_items": [
+      {"task": "Ship the Redis cache behind a feature flag", "owner": "Arjun", "deadline": "by Thursday"},
+      {"task": "Write the rollback runbook for the cache", "owner": "Meera", "deadline": "Unspecified"},
+      {"task": "Update the on-call rotation", "owner": "Unspecified", "deadline": "before the release"},
+      {"task": "Check GPU node budget with finance and get back to Meera", "owner": "Priya", "deadline": "by Monday"}
+    ],
+    "not_confirmed": [
+      "Look into the flaky integration tests (Rohan was only suggested; Priya still has to ask him)"
+    ],
+    "open_questions": [
+      "Is there budget for the extra GPU nodes for the fraud model (about $2,500 a month)?"
+    ],
+    "must_keep": {
+      "numbers": ["420 ms", "180 ms", "5 minute TTL", "$2,500 a month", "24th"],
+      "negations": ["not this quarter", "don't have the bandwidth", "not migrating to Kafka", "I don't know yet", "not blocking the release"]
+    }
+  }
+}

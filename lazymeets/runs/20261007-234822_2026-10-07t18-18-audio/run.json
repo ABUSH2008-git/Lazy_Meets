@@ -1,0 +1,651 @@
+{
+ "run_id": "20261007-234822_2026-10-07t18-18-audio",
+ "audio_name": "2026-10-07T18-18_audio.wav",
+ "created": "2026-10-07T23:48:22",
+ "context": {
+  "title": "",
+  "date": "",
+  "description": "",
+  "participants": [],
+  "glossary": [],
+  "domains": []
+ },
+ "settings": {
+  "base_url": "https://api.groq.com/openai/v1",
+  "stt_backend": "api",
+  "stt_model": "whisper-large-v3-turbo",
+  "refine_model": "openai/gpt-oss-120b",
+  "minutes_model": "openai/gpt-oss-120b",
+  "refine_reasoning": "medium",
+  "minutes_reasoning": "medium",
+  "temperature": 0.3,
+  "tpm_budget": 0,
+  "diarize": false,
+  "num_speakers": 0,
+  "language": "en",
+  "max_upload_mb": 300,
+  "chunk_minutes": 10.0,
+  "persist_runs": true,
+  "runs_dir": "C:\\Users\\AMIT\\Desktop\\lazymeets\\runs",
+  "models_dir": "C:\\Users\\AMIT\\.cache\\meetscribe\\models",
+  "request_timeout": 180.0
+ },
+ "speaker_names": {},
+ "duration": 18.24,
+ "transcript": {
+  "segments": [
+   {
+    "id": 1,
+    "start": 0.0,
+    "end": 6.0,
+    "text": "Sidhu will take the Vaiva on 11th October 2008.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "Sidhu",
+      "start": 0.74,
+      "end": 1.12
+     },
+     {
+      "word": "will",
+      "start": 1.12,
+      "end": 1.46
+     },
+     {
+      "word": "take",
+      "start": 1.46,
+      "end": 1.84
+     },
+     {
+      "word": "the",
+      "start": 1.84,
+      "end": 2.12
+     },
+     {
+      "word": "Vaiva",
+      "start": 2.12,
+      "end": 2.34
+     },
+     {
+      "word": "on",
+      "start": 2.34,
+      "end": 2.8
+     },
+     {
+      "word": "11th",
+      "start": 2.8,
+      "end": 3.34
+     },
+     {
+      "word": "October",
+      "start": 3.34,
+      "end": 3.72
+     },
+     {
+      "word": "2008.",
+      "start": 3.72,
+      "end": 6.0
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "start": 6.0,
+    "end": 11.22,
+    "text": "If his mood changes he can shift it to 2029.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "If",
+      "start": 6.0,
+      "end": 6.08
+     },
+     {
+      "word": "his",
+      "start": 6.08,
+      "end": 6.46
+     },
+     {
+      "word": "mood",
+      "start": 6.46,
+      "end": 6.98
+     },
+     {
+      "word": "changes",
+      "start": 6.98,
+      "end": 7.72
+     },
+     {
+      "word": "he",
+      "start": 7.72,
+      "end": 8.1
+     },
+     {
+      "word": "can",
+      "start": 8.1,
+      "end": 8.54
+     },
+     {
+      "word": "shift",
+      "start": 8.54,
+      "end": 9.1
+     },
+     {
+      "word": "it",
+      "start": 9.1,
+      "end": 9.28
+     },
+     {
+      "word": "to",
+      "start": 9.28,
+      "end": 9.5
+     },
+     {
+      "word": "2029.",
+      "start": 9.5,
+      "end": 11.22
+     }
+    ]
+   },
+   {
+    "id": 3,
+    "start": 11.22,
+    "end": 18.24,
+    "text": "The TAs will not take the Vaiva and Sidhu will take the TAs.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "The",
+      "start": 11.22,
+      "end": 12.32
+     },
+     {
+      "word": "TAs",
+      "start": 12.32,
+      "end": 12.62
+     },
+     {
+      "word": "will",
+      "start": 12.62,
+      "end": 12.84
+     },
+     {
+      "word": "not",
+      "start": 12.84,
+      "end": 13.1
+     },
+     {
+      "word": "take",
+      "start": 13.1,
+      "end": 13.5
+     },
+     {
+      "word": "the",
+      "start": 13.5,
+      "end": 13.72
+     },
+     {
+      "word": "Vaiva",
+      "start": 13.72,
+      "end": 14.08
+     },
+     {
+      "word": "and",
+      "start": 14.08,
+      "end": 14.66
+     },
+     {
+      "word": "Sidhu",
+      "start": 14.66,
+      "end": 15.12
+     },
+     {
+      "word": "will",
+      "start": 15.12,
+      "end": 15.34
+     },
+     {
+      "word": "take",
+      "start": 15.34,
+      "end": 15.64
+     },
+     {
+      "word": "the",
+      "start": 15.64,
+      "end": 15.82
+     },
+     {
+      "word": "TAs.",
+      "start": 15.82,
+      "end": 16.32
+     }
+    ]
+   }
+  ],
+  "duration": 18.24,
+  "model": "whisper-large-v3-turbo",
+  "language": "en",
+  "whisper_prompt": "Meeting recording.",
+  "dropped": [],
+  "diarized": false
+ },
+ "refined": {
+  "segments": [
+   {
+    "id": 1,
+    "start": 0.0,
+    "end": 6.0,
+    "text": "Sidhu will take the viva on 11th October 2008.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "Sidhu",
+      "start": 0.74,
+      "end": 1.12
+     },
+     {
+      "word": "will",
+      "start": 1.12,
+      "end": 1.46
+     },
+     {
+      "word": "take",
+      "start": 1.46,
+      "end": 1.84
+     },
+     {
+      "word": "the",
+      "start": 1.84,
+      "end": 2.12
+     },
+     {
+      "word": "Vaiva",
+      "start": 2.12,
+      "end": 2.34
+     },
+     {
+      "word": "on",
+      "start": 2.34,
+      "end": 2.8
+     },
+     {
+      "word": "11th",
+      "start": 2.8,
+      "end": 3.34
+     },
+     {
+      "word": "October",
+      "start": 3.34,
+      "end": 3.72
+     },
+     {
+      "word": "2008.",
+      "start": 3.72,
+      "end": 6.0
+     }
+    ]
+   },
+   {
+    "id": 2,
+    "start": 6.0,
+    "end": 11.22,
+    "text": "If his mode changes he can shift it to 2029.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "If",
+      "start": 6.0,
+      "end": 6.08
+     },
+     {
+      "word": "his",
+      "start": 6.08,
+      "end": 6.46
+     },
+     {
+      "word": "mood",
+      "start": 6.46,
+      "end": 6.98
+     },
+     {
+      "word": "changes",
+      "start": 6.98,
+      "end": 7.72
+     },
+     {
+      "word": "he",
+      "start": 7.72,
+      "end": 8.1
+     },
+     {
+      "word": "can",
+      "start": 8.1,
+      "end": 8.54
+     },
+     {
+      "word": "shift",
+      "start": 8.54,
+      "end": 9.1
+     },
+     {
+      "word": "it",
+      "start": 9.1,
+      "end": 9.28
+     },
+     {
+      "word": "to",
+      "start": 9.28,
+      "end": 9.5
+     },
+     {
+      "word": "2029.",
+      "start": 9.5,
+      "end": 11.22
+     }
+    ]
+   },
+   {
+    "id": 3,
+    "start": 11.22,
+    "end": 18.24,
+    "text": "The TAs will not take the viva and Sidhu will take the TAs.",
+    "speaker": null,
+    "avg_logprob": -0.17621066,
+    "no_speech_prob": 0.0,
+    "compression_ratio": 1.3508772,
+    "low_confidence": false,
+    "words": [
+     {
+      "word": "The",
+      "start": 11.22,
+      "end": 12.32
+     },
+     {
+      "word": "TAs",
+      "start": 12.32,
+      "end": 12.62
+     },
+     {
+      "word": "will",
+      "start": 12.62,
+      "end": 12.84
+     },
+     {
+      "word": "not",
+      "start": 12.84,
+      "end": 13.1
+     },
+     {
+      "word": "take",
+      "start": 13.1,
+      "end": 13.5
+     },
+     {
+      "word": "the",
+      "start": 13.5,
+      "end": 13.72
+     },
+     {
+      "word": "Vaiva",
+      "start": 13.72,
+      "end": 14.08
+     },
+     {
+      "word": "and",
+      "start": 14.08,
+      "end": 14.66
+     },
+     {
+      "word": "Sidhu",
+      "start": 14.66,
+      "end": 15.12
+     },
+     {
+      "word": "will",
+      "start": 15.12,
+      "end": 15.34
+     },
+     {
+      "word": "take",
+      "start": 15.34,
+      "end": 15.64
+     },
+     {
+      "word": "the",
+      "start": 15.64,
+      "end": 15.82
+     },
+     {
+      "word": "TAs.",
+      "start": 15.82,
+      "end": 16.32
+     }
+    ]
+   }
+  ],
+  "corrections": [
+   {
+    "segment_id": 1,
+    "original": "Vaiva",
+    "corrected": "viva",
+    "category": "terminology",
+    "reason": "sound-alike of viva; oral exam context",
+    "status": "applied",
+    "block_reason": null
+   },
+   {
+    "segment_id": 2,
+    "original": "mood",
+    "corrected": "mode",
+    "category": "terminology",
+    "reason": "sound-alike of mode; schedule context",
+    "status": "applied",
+    "block_reason": null
+   },
+   {
+    "segment_id": 3,
+    "original": "Vaiva",
+    "corrected": "viva",
+    "category": "terminology",
+    "reason": "sound-alike of viva; oral exam context",
+    "status": "applied",
+    "block_reason": null
+   }
+  ],
+  "model": "openai/gpt-oss-120b"
+ },
+ "record": {
+  "title": "Viva Scheduling and TA Assignment",
+  "date": "",
+  "summary": "The meeting confirmed that Sidhu will conduct the viva on 11th October 2008, with a possible shift to 2029 if his mode changes. It also decided that the teaching assistants will not conduct the viva and that Sidhu will take over the TAs.",
+  "participants": [
+   "Sidhu"
+  ],
+  "minutes": [
+   {
+    "topic": "Viva scheduling",
+    "points": [
+     "Sidhu will take the viva on 11th October 2008",
+     "If his mode changes, he can shift it to 2029"
+    ],
+    "segment_ids": [
+     1,
+     2
+    ]
+   },
+   {
+    "topic": "TA responsibilities",
+    "points": [
+     "The TAs will not take the viva",
+     "Sidhu will take the TAs"
+    ],
+    "segment_ids": [
+     3
+    ]
+   }
+  ],
+  "decisions": [
+   {
+    "id": "D1",
+    "decision": "Sidhu will take the viva on 11th October 2008",
+    "evidence_quote": "Sidhu will take the viva on 11th October 2008.",
+    "segment_ids": [
+     1
+    ],
+    "start": 0.74,
+    "verified": true,
+    "flags": []
+   },
+   {
+    "id": "D2",
+    "decision": "If his mode changes, the viva can be shifted to 2029",
+    "evidence_quote": "If his mode changes he can shift it to 2029.",
+    "segment_ids": [
+     2
+    ],
+    "start": 6.0,
+    "verified": true,
+    "flags": []
+   },
+   {
+    "id": "D3",
+    "decision": "The TAs will not take the viva",
+    "evidence_quote": "The TAs will not take the viva",
+    "segment_ids": [
+     3
+    ],
+    "start": 11.22,
+    "verified": true,
+    "flags": []
+   },
+   {
+    "id": "D4",
+    "decision": "Sidhu will take the TAs",
+    "evidence_quote": "Sidhu will take the TAs.",
+    "segment_ids": [
+     3
+    ],
+    "start": 14.66,
+    "verified": true,
+    "flags": []
+   }
+  ],
+  "proposals": [],
+  "action_items": [
+   {
+    "id": "A1",
+    "task": "Take the viva",
+    "owner": "Sidhu",
+    "deadline": "11th October 2008",
+    "status": "confirmed",
+    "target": null,
+    "target_type": "unclear",
+    "evidence_quote": "Sidhu will take the viva on 11th October 2008.",
+    "owner_evidence": "Sidhu will take the viva on 11th October 2008.",
+    "deadline_evidence": "on 11th October 2008",
+    "segment_ids": [
+     1
+    ],
+    "start": 0.74,
+    "verified": true,
+    "flags": []
+   },
+   {
+    "id": "A2",
+    "task": "Take the TAs",
+    "owner": "Sidhu",
+    "deadline": null,
+    "status": "confirmed",
+    "target": null,
+    "target_type": "unclear",
+    "evidence_quote": "Sidhu will take the TAs.",
+    "owner_evidence": "Sidhu will take the TAs.",
+    "deadline_evidence": null,
+    "segment_ids": [
+     3
+    ],
+    "start": 14.66,
+    "verified": true,
+    "flags": []
+   }
+  ],
+  "suggested_followups": [],
+  "open_questions": [],
+  "verification_notes": [],
+  "model": "openai/gpt-oss-120b",
+  "mode": "single-pass"
+ },
+ "errors": {},
+ "timings": {
+  "transcribe": 3.4,
+  "refine": 1.9,
+  "minutes": 17.7
+ },
+ "usage": [
+  {
+   "stage": "transcribe",
+   "model": "whisper-large-v3-turbo",
+   "kind": "stt",
+   "seconds": 1.3115065097808838,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "reasoning_tokens": 0,
+   "attempts": 1,
+   "mode": ""
+  },
+  {
+   "stage": "refine",
+   "model": "openai/gpt-oss-120b",
+   "kind": "chat",
+   "seconds": 1.940305471420288,
+   "prompt_tokens": 1029,
+   "completion_tokens": 601,
+   "reasoning_tokens": 481,
+   "attempts": 1,
+   "mode": "strict"
+  },
+  {
+   "stage": "minutes",
+   "model": "openai/gpt-oss-120b",
+   "kind": "chat",
+   "seconds": 5.85382342338562,
+   "prompt_tokens": 2181,
+   "completion_tokens": 1802,
+   "reasoning_tokens": 1319,
+   "attempts": 1,
+   "mode": "strict"
+  }
+ ],
+ "models": {
+  "speech_to_text": "whisper-large-v3-turbo",
+  "refinement": "openai/gpt-oss-120b",
+  "minutes": "openai/gpt-oss-120b",
+  "provider": "https://api.groq.com/openai/v1",
+  "speaker_detection": null
+ },
+ "audio_stats": {
+  "peak_dbfs": -0.0,
+  "rms_dbfs": -21.9,
+  "chunks": 1
+ }
+}

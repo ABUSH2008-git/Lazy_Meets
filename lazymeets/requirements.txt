@@ -1,0 +1,12 @@
+# web app + pipeline
+streamlit>=1.50,<2
+openai>=1.60
+pydantic>=2.6
+numpy>=1.26
+pandas>=2.0
+rapidfuzz>=3.6
+jellyfish>=1.0
+imageio-ffmpeg>=0.5      # bundled ffmpeg, so nothing else to install on Windows/Mac
+python-dotenv>=1.0
+sherpa-onnx>=1.12        # offline speaker detection and offline transcription (CPU)
+jiwer>=3.0               # scripts/eval_wer.py
