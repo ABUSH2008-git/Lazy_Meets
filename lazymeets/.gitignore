@@ -1,0 +1,19 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+/runs/
+/outputs/
+*.egg-info/
+.DS_Store
+.streamlit/secrets.toml
+
+# never commit credentials
+.env.*
+!.env.example
+secrets.toml
+client_secret*.json
+*.pem
+*.key

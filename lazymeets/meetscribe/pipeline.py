@@ -23,7 +23,7 @@ from typing import Callable, Optional
 
 from . import exports
 from .audio import prepare, validate_upload
-from .config import Settings
+from .config import Settings, provider_for_url
 from .diarize import apply_speakers, diarize_samples
 from .errors import MeetScribeError, StageError
 from .llm import ModelClient
@@ -212,7 +212,9 @@ def models_used(settings: Settings) -> dict:
         "speech_to_text": settings.stt_model if settings.stt_backend == "api" else "moonshine-base-en (offline)",
         "refinement": settings.refine_model,
         "minutes": settings.minutes_model,
-        "provider": settings.base_url,
+        "provider": provider_for_url(settings.base_url).name if provider_for_url(settings.base_url).id != "custom" else settings.base_url,
+        "speech_to_text_provider": (provider_for_url(settings.stt_url).name if provider_for_url(settings.stt_url).id != "custom"
+                                    else settings.stt_url) if settings.stt_backend == "api" else "offline",
         "speaker_detection": "pyannote-segmentation-3.0 + TitaNet-small (offline)" if settings.diarize else None,
     }
 

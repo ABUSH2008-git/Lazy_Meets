@@ -7,6 +7,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import html
+import shutil
 import json
 import threading
 import time
@@ -20,14 +21,17 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from meetscribe import __version__
-from meetscribe.audio import validate_upload
+from meetscribe.audio import probe_duration, validate_upload
 from meetscribe.config import (
     LLM_MODEL_CHOICES,
+    PROVIDERS,
     REASONING_CHOICES,
     SAMPLES_DIR,
     STT_MODEL_CHOICES,
     Settings,
 )
+from meetscribe.usage import UsageStore, fmt_minutes
+import onboarding as ob
 from meetscribe.errors import MeetScribeError, StageError
 from meetscribe.exports import email_draft
 from meetscribe.glossaries import PRESETS, parse_terms
@@ -151,6 +155,13 @@ div[data-testid="stMetricLabel"] *{color:var(--ms-muted)!important}
 [data-testid="stTextInputRootElement"]:focus-within, [data-testid="stTextAreaRootElement"]:focus-within{border-color:var(--ms-accent)!important}
 [data-testid="stTextInputRootElement"] input, [data-testid="stTextAreaRootElement"] textarea{color:var(--ms-text)!important;-webkit-text-fill-color:var(--ms-text)}
 input::placeholder, textarea::placeholder{color:var(--ms-muted)!important;-webkit-text-fill-color:var(--ms-muted)!important;opacity:.85}
+[data-testid="stSelectbox"] [role="group"], [data-testid="stMultiSelect"] [role="group"]{background:var(--ms-bg)!important;border:1px solid var(--ms-border)!important;border-radius:12px!important}
+[data-testid="stSelectbox"] input, [data-testid="stMultiSelect"] input{color:var(--ms-text)!important;-webkit-text-fill-color:var(--ms-text)!important;background:transparent!important}
+[data-testid="stSelectbox"] button, [data-testid="stMultiSelect"] button{color:var(--ms-muted)!important;background:transparent!important}
+[data-testid="stSelectbox"] [role="group"]:focus-within{border-color:var(--ms-accent)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--ms-accent) 30%,transparent)!important}
+[role="listbox"] [role="option"]{color:var(--ms-text)!important;background:var(--ms-surface)!important}
+[role="listbox"] [role="option"][data-focused], [role="listbox"] [role="option"]:hover{background:color-mix(in srgb,var(--ms-primary) 16%,var(--ms-surface))!important}
+[role="listbox"] [role="option"][aria-selected="true"]{color:var(--ms-primary)!important;font-weight:600}
 [data-baseweb="input"]:focus-within, [data-baseweb="textarea"]:focus-within, [data-baseweb="select"] > div:focus-within{border-color:var(--ms-accent)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--ms-accent) 30%,transparent)!important}
 [data-baseweb="tag"]{background:color-mix(in srgb,var(--ms-primary) 22%,transparent)!important}
 [data-baseweb="tag"] *{color:var(--ms-text)!important}
@@ -406,6 +417,15 @@ def _process_worker(job: Job, run: Run, s: Settings, start: str) -> None:
     except Exception as e:  # never leave the session stuck
         job.error = str(e)
     finally:
+        # count the audio toward the free daily allowance once it has been transcribed
+        user, store = job.meta.get("charge"), job.meta.get("store")
+        if user and store is not None and start == "transcribe":
+            try:
+                r = Run.load(Path(job.run_dir))
+                if r.transcript is not None:
+                    store.charge(user, float(r.duration or job.meta.get("duration") or 0.0))
+            except Exception:
+                pass
         job.done = True
 
 
@@ -454,10 +474,25 @@ def _start_new_process(s: Settings, force: bool) -> None:
     ss.dup = None
     run = new_run(name, s, _ctx_from_state())
     run.source_path.write_bytes(data)
+    meta = {"hash": digest, "new": True}
+    if ob.uses_free_key(s):
+        store = usage_store(s)
+        if store.enabled:
+            user = (ss.get("user") or {}).get("email", "local")
+            dur = probe_duration(run.source_path)
+            left = store.remaining(user)
+            if dur is not None and not store.allows(user, dur):
+                shutil.rmtree(run.dir, ignore_errors=True)
+                ss.flash = (f"This recording is {fmt_minutes(dur)} long, but you have {fmt_minutes(left)} of free audio left today.",
+                            "Try a shorter clip, come back tomorrow (the allowance resets at midnight, India time), "
+                            "or use your own API key: Change setup in the sidebar.")
+                ss.busy = False
+                return
+            meta.update(charge=user, store=store, duration=dur or 0.0)
     run.save()
     ss.qa = {}
     ss.seek = 0.0
-    _launch(Job(kind="process", run_dir=str(run.dir), meta={"hash": digest, "new": True}), _process_worker, run, s, "transcribe")
+    _launch(Job(kind="process", run_dir=str(run.dir), meta=meta), _process_worker, run, s, "transcribe")
 
 
 def handle_pending(s: Settings) -> None:
@@ -475,7 +510,10 @@ def handle_pending(s: Settings) -> None:
             if p.get("names") is not None:
                 run.speaker_names = p["names"]
                 run.save()
-            _launch(Job(kind="process", run_dir=p["run_dir"], meta={"new": False}), _process_worker, run, s, p["start"])
+            meta = {"new": False}
+            if p["start"] == "transcribe" and ob.uses_free_key(s) and usage_store(s).enabled:
+                meta.update(charge=(ss.get("user") or {}).get("email", "local"), store=usage_store(s))
+            _launch(Job(kind="process", run_dir=p["run_dir"], meta=meta), _process_worker, run, s, p["start"])
         elif p["kind"] == "qa":
             run = Run.load(Path(p["run_dir"]))
             segs = run.refined.segments if run.refined else run.transcript.segments
@@ -610,13 +648,55 @@ def render_loader(j: Job, small: bool = False) -> None:
 # --------------------------------------------------------------------------- sidebar: settings
 
 
+def server_groq_key() -> str:
+    """The app's own (free, preloaded) Groq key from .env or Streamlit secrets."""
+    k = Settings.from_env().api_key
+    if not k:
+        try:
+            k = str(st.secrets.get("GROQ_API_KEY", "")).strip()
+        except Exception:
+            k = ""
+    return k
+
+
+def usage_store(s: Settings) -> UsageStore:
+    return UsageStore(s.usage_file, s.free_daily_minutes * 60, s.quota_tz)
+
+
+def account_sidebar(s: Settings) -> None:
+    user = ss.get("user") or {}
+    with st.container(key="ms_account"):
+        if not user.get("local"):
+            st.markdown(f"**{html.escape(user.get('name', ''))}**  \n<span style='color:var(--ms-muted);font-size:.85rem'>"
+                        f"{html.escape(user.get('email', ''))}</span>", unsafe_allow_html=True)
+        st.caption(ob.mode_label())
+        if ob.uses_free_key(s):
+            store = usage_store(s)
+            if store.enabled:
+                left = store.remaining(user.get("email", "local"))
+                st.progress(min(1.0, left / store.limit), text=f"Free key: {fmt_minutes(left)} of audio left today")
+        c = st.columns(2)
+        if c[0].button("Change setup", width="stretch", disabled=busy(), key="ms_change_setup"):
+            ss.mode = None
+            ss.own_ready = False
+            st.rerun()
+        if not user.get("local") and c[1].button("Sign out", width="stretch", disabled=busy(), key="ms_signout"):
+            ob.sign_out()
+    st.divider()
+
+
 def build_settings() -> Settings:
     s = Settings.from_env()
-    env_key = s.api_key
+    user = ss.get("user") or {"email": "local", "local": True}
+    if not user.get("local"):
+        s.runs_dir = s.runs_dir / ob.user_folder(user)  # each person only sees their own meetings
+    s = ob.apply_mode(s, server_groq_key())
+    own = ss.get("mode") == "own"
     with st.sidebar:
         if LOGO_B64:
             st.markdown(f"<div class='ms-side-logo'><img src='data:image/png;base64,{LOGO_B64}' alt=''><b>LazyMeets</b></div>",
                         unsafe_allow_html=True)
+        account_sidebar(s)
         run = current_run()
         if run and run.playback_path.exists() and not ss.show_new:
             st.markdown("#### 🎧 Recording")
@@ -626,31 +706,35 @@ def build_settings() -> Settings:
             st.divider()
 
         st.markdown("#### Settings")
-        with st.expander("API key & models", expanded=not env_key):
-            key = st.text_input(
-                "Groq API key",
-                type="password",
-                placeholder="Using the key from the server" if env_key else "gsk_…",
-                help="Free key at console.groq.com/keys. It's only kept in this browser session.",
-            )
-            if key.strip():
-                s.api_key = key.strip()
-            if not s.api_key:
-                st.warning("Add a Groq API key to process meetings.")
-            stt_mode = st.radio(
-                "Speech-to-text",
-                ["Whisper via API (most accurate)", "Offline on this machine (Moonshine)"],
-                index=0 if s.stt_backend == "api" else 1,
-                help="Offline mode runs a small model on the CPU. It's slower and less accurate, but no audio leaves the machine.",
-            )
-            s.stt_backend = "api" if stt_mode.startswith("Whisper") else "local"
-            if s.stt_backend == "api":
-                s.stt_model = st.selectbox("Whisper model", STT_MODEL_CHOICES, index=_idx(STT_MODEL_CHOICES, s.stt_model))
-            s.refine_model = st.selectbox("Language model #1: refinement", LLM_MODEL_CHOICES, index=_idx(LLM_MODEL_CHOICES, s.refine_model))
-            s.minutes_model = st.selectbox("Language model #2: minutes & tasks", LLM_MODEL_CHOICES, index=_idx(LLM_MODEL_CHOICES, s.minutes_model))
+        with st.expander("Models"):
+            if own:
+                o = ob._own()
+                ms = o["models"] or [s.refine_model, s.minutes_model]
+                st.caption(f"Language models on {PROVIDERS[o['provider']].name}")
+                s.refine_model = st.selectbox("Language model #1: refinement", ms, index=_idx(ms, s.refine_model), key="sb_refine")
+                s.minutes_model = st.selectbox("Language model #2: minutes & tasks", ms, index=_idx(ms, s.minutes_model), key="sb_minutes")
+                o["refine"], o["minutes"] = s.refine_model, s.minutes_model
+                if s.stt_backend == "api":
+                    st.caption(f"Speech-to-text: {s.stt_model}")
+                else:
+                    st.caption("Speech-to-text: offline (Moonshine)")
+            else:
+                stt_mode = st.radio(
+                    "Speech-to-text",
+                    ["Whisper via API (most accurate)", "Offline on this machine (Moonshine)"],
+                    index=0 if s.stt_backend == "api" else 1, key="sb_stt_mode",
+                    help="Offline mode runs a small model on the CPU. It's slower and less accurate, but no audio leaves the machine.",
+                )
+                s.stt_backend = "api" if stt_mode.startswith("Whisper") else "local"
+                if s.stt_backend == "api":
+                    s.stt_model = st.selectbox("Whisper model", STT_MODEL_CHOICES, index=_idx(STT_MODEL_CHOICES, s.stt_model), key="sb_stt")
+                s.refine_model = st.selectbox("Language model #1: refinement", LLM_MODEL_CHOICES,
+                                              index=_idx(LLM_MODEL_CHOICES, s.refine_model), key="sb_refine_free")
+                s.minutes_model = st.selectbox("Language model #2: minutes & tasks", LLM_MODEL_CHOICES,
+                                               index=_idx(LLM_MODEL_CHOICES, s.minutes_model), key="sb_minutes_free")
             if s.refine_model == s.minutes_model:
-                st.warning("Both stages use the same model. The task asks for two separate language models.")
-            if st.button("Check key & models", width="stretch", disabled=busy()):
+                st.warning("Both stages use the same model, so they share one rate limit. Pick two different models.")
+            if st.button("Check keys & models", width="stretch", disabled=busy()):
                 check_key(s)
 
         with st.expander("Speakers"):
@@ -666,7 +750,6 @@ def build_settings() -> Settings:
             tpm = st.number_input("Tokens per request budget (0 = auto-detect)", min_value=0, value=int(s.tpm_budget), step=1000,
                                   help="Groq's free tier allows 8,000 tokens per minute. Long meetings are then processed in parts.")
             s.tpm_budget = int(tpm)
-            s.base_url = st.text_input("API base URL (any OpenAI-compatible provider)", value=s.base_url)
 
         history_sidebar(s)
         st.divider()
@@ -681,13 +764,11 @@ def _idx(options: list[str], value: str) -> int:
 def check_key(s: Settings) -> None:
     try:
         client = ModelClient(s)
-        models = client.available_models()
-        need = {"Whisper": s.stt_model, "LLM #1": s.refine_model, "LLM #2": s.minutes_model}
-        missing = [f"{k}: {v}" for k, v in need.items() if v not in models and (k != "Whisper" or s.stt_backend == "api")]
-        if missing:
-            st.error("Key works, but these models aren't available: " + ", ".join(missing))
-        else:
-            st.success(f"Key works. All selected models are available ({len(models)} models on this account).")
+        need = {"refinement": s.refine_model, "minutes": s.minutes_model}
+        if s.stt_backend == "api":
+            need["speech-to-text"] = s.stt_model
+        client.preflight(need)
+        st.success("Keys work. All selected models are available.")
     except MeetScribeError as e:
         st.error(e.message)
         if e.hint:
@@ -792,7 +873,10 @@ def new_meeting_view(s: Settings) -> None:
         st.button("Processing…" if b else "Process meeting", type="primary", width="stretch",
                   disabled=b or not ready or no_key, on_click=request, args=("process_new",))
     if no_key:
-        st.caption("Add your Groq API key in the sidebar first.")
+        st.caption("No API key is set up. Use Change setup in the sidebar.")
+    elif ob.uses_free_key(s) and usage_store(s).enabled:
+        left = usage_store(s).remaining((ss.get("user") or {}).get("email", "local"))
+        st.caption(f"Free key: {fmt_minutes(left)} of audio left today.")
     job_monitor(("process",))
 
 
@@ -1275,7 +1359,8 @@ def tab_details(run: Run) -> None:
 # --------------------------------------------------------------------------- main
 
 ss.setdefault("theme_name", "Midnight Teal")
-for _k, _v in {"busy": False, "job": None, "pending": None, "hashes": {}, "dup": None, "flash": None}.items():
+for _k, _v in {"busy": False, "job": None, "pending": None, "hashes": {}, "dup": None, "flash": None,
+               "mode": None, "own_ready": False}.items():
     ss.setdefault(_k, _v)
 finish_job()
 inject_css(theme())
@@ -1283,6 +1368,25 @@ _top = st.columns([10, 1.7])
 with _top[1]:
     with st.popover("🎨 Theme", width="stretch"):
         st.radio("Colour theme", list(THEMES), key="theme_name")
+
+# ---- onboarding: sign in -> free key or own keys -> (own keys) setup
+_user = ob.current_user()
+if _user is None:
+    ob.login_page(LOGO_B64)
+    st.stop()
+ss.user = _user
+_server_key = server_groq_key()
+if ss.mode == "free" and not _server_key:
+    ss.mode = None
+if ss.mode is None:
+    _base = Settings.from_env()  # the usage file is shared by all users, next to the runs folder
+    ob.choose_page(LOGO_B64, _user, usage_store(_base), bool(_server_key))
+    st.stop()
+if ss.mode == "own" and not ss.own_ready:
+    _base = Settings.from_env()
+    ob.keys_page(_base, bool(_server_key), fmt_minutes(_base.free_daily_minutes * 60), _user)
+    st.stop()
+
 settings = build_settings()
 handle_pending(settings)
 run = current_run()

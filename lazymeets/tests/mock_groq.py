@@ -166,6 +166,9 @@ class Handler(BaseHTTPRequestHandler):
         if self.path.endswith("/__fail_schema"):
             STATE["fail_schema"] = json.loads(raw or b"{}")  # {"name": "meeting_record", "n": 1}
             return self._send(200, {"ok": True})
+        if self.path.endswith("/__reject_mct"):
+            STATE["reject_mct"] = bool(json.loads(raw or b"{}").get("on", True))
+            return self._send(200, {"ok": True})
         if self.path.endswith("/__fail429"):
             STATE["fail_next_429"] = int(json.loads(raw or b"{}").get("n", 1))
             return self._send(200, {"ok": True})
@@ -174,7 +177,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(429, {"error": {"message": "Rate limit reached. Please try again in 1.2s.", "type": "tokens"}},
                               {"retry-after": "1"})
         if self.path.endswith("/audio/transcriptions"):
-            STATE["calls"].append({"kind": "stt", "bytes": n})
+            STATE["calls"].append({"kind": "stt", "bytes": n, "auth": self.headers.get("authorization", "")})
             time.sleep(0.3)
             return self._send(200, FIXTURE)
         if self.path.endswith("/chat/completions"):
@@ -182,7 +185,14 @@ class Handler(BaseHTTPRequestHandler):
             rf = req.get("response_format") or {}
             name = (rf.get("json_schema") or {}).get("name", "")
             user = req["messages"][-1]["content"]
-            STATE["calls"].append({"kind": "chat", "model": req.get("model"), "schema": name, "max": req.get("max_completion_tokens")})
+            if STATE.get("reject_mct") and "max_completion_tokens" in req:
+                # like providers that only know the older "max_tokens" parameter
+                return self._send(400, {"error": {"message": "Unrecognized request argument supplied: max_completion_tokens",
+                                                  "type": "invalid_request_error"}})
+            if "max_completion_tokens" not in req and "max_tokens" in req:
+                req["max_completion_tokens"] = req["max_tokens"]
+            STATE["calls"].append({"kind": "chat", "model": req.get("model"), "schema": name, "max": req.get("max_completion_tokens"),
+                                   "auth": self.headers.get("authorization", "")})
             fs = STATE["fail_schema"]
             if fs and fs.get("name") == name and fs.get("n", 0) > 0:
                 fs["n"] -= 1

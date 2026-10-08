@@ -1,5 +1,6 @@
 # web app + pipeline
 streamlit>=1.50,<2
+Authlib>=1.3.2           # "Sign in with Google" (st.login)
 openai>=1.60
 pydantic>=2.6
 numpy>=1.26

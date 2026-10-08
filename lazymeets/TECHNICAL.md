@@ -52,6 +52,14 @@ flowchart LR
    Everything the checks changed is listed in "Automatic checks" in the UI and the Markdown export.
 6. **Outputs.** One `MeetingRecord` object feeds the UI, `meeting_record.md`, `meeting_record.json`, `action_items.csv` and the HTML report, so they always list the same decisions and tasks. Missing owners and deadlines are written as `Unspecified`. Empty lists are shown as "No decisions were reached" / "No action items were assigned".
 
+## Providers, sign-in and the free allowance
+
+- **Two connections.** The client keeps one connection for speech-to-text and one for the language models. Each has its own base URL and key, so Whisper can run on Groq while the minutes run on Gemini, OpenAI, OpenRouter, Mistral, Cerebras or any OpenAI-compatible server. The pre-run model check asks each provider separately.
+- **Provider differences** are handled by retrying without the setting the provider rejected: strict schema → loose schema → JSON mode, `max_completion_tokens` → `max_tokens`, no `reasoning_effort`, default temperature. The token budget per request comes from the `x-ratelimit-*` headers when present, otherwise from a per-provider default.
+- **Sign-in** uses Streamlit's built-in OpenID Connect (`st.login`) with Google. Each user's runs go in their own folder (named by a hash of the email), so people only see their own meetings.
+- **Free allowance.** Runs that use the app's own key count audio minutes per user per day (60 by default). The length is read from the file header before processing, so a too-long file is refused up front. The minutes are added once transcription has finished. Usage is stored as hashed emails in a small JSON file.
+- **Keys** typed by users live only in the browser session. `Settings.public_dict()` strips both keys before anything is saved next to a run.
+
 ## Reliability
 
 - **Rate limits.** The client reads `x-ratelimit-*` headers to learn the tokens-per-minute limit, sizes each request to fit it, and waits for the window to reset when needed. On HTTP 429 it waits for `retry-after`. Daily-quota errors become a clear message. On a small budget, refinement runs in batches, and minutes run part by part (each part has the earlier parts' summary for context) followed by a merge step. If a model runs out of output tokens, it's retried with less reasoning.

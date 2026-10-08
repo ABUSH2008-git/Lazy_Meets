@@ -10,6 +10,7 @@ import shutil
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 
@@ -82,6 +83,27 @@ def _friendly_decode_error(stderr: str, filename: str) -> AudioError:
         hint="Try re-exporting the recording as .mp3 or .wav.",
         detail=stderr[-1500:],
     )
+
+
+def _hms(text: str) -> Optional[float]:
+    h, m, s = text.split(":")
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def probe_duration(path: Path) -> Optional[float]:
+    """Length of the audio in seconds, read quickly without decoding everything. None if unknown."""
+    try:
+        proc = subprocess.run([ffmpeg_exe(), "-nostdin", "-hide_banner", "-i", str(path)], capture_output=True, timeout=60)
+        m = re.search(r"Duration:\s*(\d+:\d+:\d+(?:\.\d+)?)", proc.stderr.decode("utf-8", "replace"))
+        if m:
+            return _hms(m.group(1))
+        # some formats (e.g. browser recordings) have no duration in the header: decode to nowhere and read the end time
+        proc = subprocess.run([ffmpeg_exe(), "-nostdin", "-hide_banner", "-i", str(path), "-vn", "-f", "null", "-"],
+                              capture_output=True, timeout=300)
+        times = re.findall(r"time=\s*(\d+:\d+:\d+(?:\.\d+)?)", proc.stderr.decode("utf-8", "replace"))
+        return _hms(times[-1]) if times else None
+    except Exception:
+        return None
 
 
 def decode_to_pcm(path: Path, filename: str | None = None) -> np.ndarray:

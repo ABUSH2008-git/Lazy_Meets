@@ -85,14 +85,21 @@ class _Caps:
     json_mode: str = "strict"  # strict -> loose -> json_object
     reasoning_effort: bool = True
     include_reasoning: bool = True
+    completion_tokens_param: str = "max_completion_tokens"  # some providers only know "max_tokens"
+    temperature: bool = True  # some reasoning models only accept the default temperature
+
+
+def _norm_model_id(m: str) -> str:
+    # Gemini lists models as "models/gemini-2.5-flash" but accepts "gemini-2.5-flash"
+    return m[len("models/"):] if m.startswith("models/") else m
 
 
 class ModelClient:
     def __init__(self, settings: Settings, notify: Notify | None = None):
-        if not settings.api_key and settings.stt_backend == "api":
+        if not settings.api_key and not (settings.stt_backend == "api" and settings.stt_key):
             raise ConfigError(
                 "No API key set.",
-                hint="Add GROQ_API_KEY to your .env file (free key at console.groq.com), or paste it in the sidebar.",
+                hint="Add GROQ_API_KEY to your .env file (free key at console.groq.com), or set up your keys in the app.",
             )
         self.settings = settings
         self.notify: Notify = notify or (lambda msg: None)
@@ -102,6 +109,16 @@ class ModelClient:
             max_retries=0,
             timeout=settings.request_timeout,
         )
+        # speech-to-text can live on a different provider (e.g. Groq Whisper + Gemini for the minutes)
+        if settings.stt_url.rstrip("/") == settings.base_url.rstrip("/") and settings.stt_key == settings.api_key:
+            self._stt_client = self._client
+        else:
+            self._stt_client = OpenAI(
+                api_key=settings.stt_key or "none",
+                base_url=settings.stt_url,
+                max_retries=0,
+                timeout=settings.request_timeout,
+            )
         self.calls: list[CallRecord] = []
         self._limits: dict[str, _Limits] = {}
         self._caps: dict[str, _Caps] = {}
@@ -120,7 +137,7 @@ class ModelClient:
             return lim.tpm
         # same account tier for every model, so any known limit is a good guess
         known = [l.tpm for l in self._limits.values() if l.tpm]
-        return min(known) if known else FREE_TIER_TPM
+        return min(known) if known else (self.settings.default_tpm or FREE_TIER_TPM)
 
     def _record_headers(self, model: str, headers: Any) -> None:
         try:
@@ -148,8 +165,9 @@ class ModelClient:
             time.sleep(wait + 0.5)
             lim.remaining = None
 
-    def _call(self, fn: Callable[[], Any], what: str, model: str) -> tuple[Any, int]:
+    def _call(self, fn: Callable[[], Any], what: str, model: str, url: str = "") -> tuple[Any, int]:
         """Run an API call with retries. Returns (result, attempts)."""
+        url = url or self.settings.base_url
         attempt = 0
         net_failures = 0
         while True:
@@ -158,8 +176,8 @@ class ModelClient:
                 return fn(), attempt
             except openai.AuthenticationError as e:
                 raise ConfigError(
-                    "The API key was rejected by the provider.",
-                    hint="Check GROQ_API_KEY (no extra spaces) or create a new key at console.groq.com/keys.",
+                    f"The API key was rejected by {url}.",
+                    hint="Check the key for extra spaces or missing characters, or create a new one in the provider's console.",
                     detail=str(e),
                 )
             except openai.PermissionDeniedError as e:
@@ -170,7 +188,7 @@ class ModelClient:
                 )
             except openai.NotFoundError as e:
                 raise ConfigError(
-                    f"Model '{model}' wasn't found at {self.settings.base_url}.",
+                    f"Model '{model}' wasn't found at {url}.",
                     hint="It may have been retired. Choose another model in the sidebar.",
                     detail=str(e),
                 )
@@ -187,7 +205,7 @@ class ModelClient:
                         f"Rate limit reached for {model} while {what}.",
                         hint=(
                             "You've used this model's daily allowance on the free tier. Try again later, pick a different "
-                            "model in the sidebar, or use a key on Groq's Developer tier."
+                            "model, or use your own API key (Change setup in the sidebar)."
                             if daily
                             else f"The provider asked us to wait about {wait / 60:.0f} minutes. Try again in a bit."
                         ),
@@ -219,27 +237,38 @@ class ModelClient:
                     time.sleep(wait)
                     continue
                 raise APIError(
-                    f"Couldn't reach {self.settings.base_url} while {what}.",
+                    f"Couldn't reach {url} while {what}.",
                     hint="Check your internet connection and try again.",
                     detail=str(e),
                 )
 
     # ------------------------------------------------------------------ model list / preflight
 
-    def available_models(self) -> list[str]:
-        res, _ = self._call(lambda: self._client.models.list(), "checking the API key", "models")
-        return sorted(m.id for m in res.data)
+    def available_models(self, stt: bool = False) -> list[str]:
+        client = self._stt_client if stt else self._client
+        url = self.settings.stt_url if stt else self.settings.base_url
+        res, _ = self._call(lambda: client.models.list(), "checking the API key", "models", url)
+        return sorted({_norm_model_id(m.id) for m in res.data})
 
     def preflight(self, needed: dict[str, str]) -> None:
-        """Fail fast (before a long transcription) if the key or a model name is wrong.
+        """Fail fast (before a long transcription) if a key or a model name is wrong.
         `needed` maps a role ("speech-to-text", ...) to a model id."""
-        try:
-            available = set(self.available_models())
-        except ConfigError:
-            raise
-        except Exception:
-            return  # some providers don't implement /models; we'll find out on first use
-        missing = [(role, m) for role, m in needed.items() if m and m not in available]
+        missing = []
+        groups = [(True, {r: m for r, m in needed.items() if r == "speech-to-text"}),
+                  (False, {r: m for r, m in needed.items() if r != "speech-to-text"})]
+        if self._stt_client is self._client:
+            groups = [(False, needed)]
+        available: set = set()
+        for stt, roles in groups:
+            if not roles:
+                continue
+            try:
+                available = set(self.available_models(stt=stt))
+            except ConfigError:
+                raise
+            except Exception:
+                continue  # some providers don't implement /models; we'll find out on first use
+            missing += [(role, m) for role, m in roles.items() if m and _norm_model_id(m) not in available]
         if missing:
             role, m = missing[0]
             close = [a for a in sorted(available) if any(p in a for p in re.split(r"[/-]", m) if len(p) > 3)][:6]
@@ -264,18 +293,18 @@ class ModelClient:
                 kwargs["language"] = language
             if prompt:
                 kwargs["prompt"] = prompt
-            return self._client.audio.transcriptions.create(**kwargs)
+            return self._stt_client.audio.transcriptions.create(**kwargs)
 
         t0 = time.time()
         try:
             try:
-                res, attempts = self._call(go, "transcribing audio", model)
+                res, attempts = self._call(go, "transcribing audio", model, self.settings.stt_url)
             except openai.BadRequestError as e:
                 if not prompt or "prompt" not in str(e).lower():
                     raise
                 self.notify("The spelling hint was rejected; transcribing without it…")
                 prompt = ""
-                res, attempts = self._call(go, "transcribing audio", model)
+                res, attempts = self._call(go, "transcribing audio", model, self.settings.stt_url)
         except openai.BadRequestError as e:
             raise APIError(
                 "The speech-to-text service couldn't process this audio.",
@@ -308,6 +337,7 @@ class ModelClient:
         bad_json_retries = 0
         truncation_retries = 0
         effort = reasoning_effort
+        switched_tokens_param = False
 
         while True:
             mode = modes[mode_i]
@@ -317,9 +347,10 @@ class ModelClient:
             kwargs: dict[str, Any] = dict(
                 model=model,
                 messages=[{"role": "system", "content": sys_msg}, {"role": "user", "content": user}],
-                max_completion_tokens=max_tokens,
-                temperature=temperature,
             )
+            kwargs[caps.completion_tokens_param] = max_tokens
+            if caps.temperature:
+                kwargs["temperature"] = temperature
             if mode == "json_object":
                 kwargs["response_format"] = {"type": "json_object"}
             else:
@@ -339,10 +370,19 @@ class ModelClient:
                 raw, attempts = self._call(
                     lambda: self._client.chat.completions.with_raw_response.create(**kwargs), stage, model
                 )
-            except openai.BadRequestError as e:
+            except (openai.BadRequestError, openai.UnprocessableEntityError) as e:
                 msg = str(e)
                 low = msg.lower()
-                if "reasoning_effort" in low and caps.reasoning_effort:
+                if caps.completion_tokens_param in low and not switched_tokens_param:
+                    switched_tokens_param = True
+                    caps.completion_tokens_param = (
+                        "max_tokens" if caps.completion_tokens_param == "max_completion_tokens" else "max_completion_tokens"
+                    )
+                    continue
+                if "temperature" in low and caps.temperature:
+                    caps.temperature = False
+                    continue
+                if ("reasoning_effort" in low or "reasoning" in low and "not supported" in low) and caps.reasoning_effort:
                     caps.reasoning_effort = False
                     continue
                 if "include_reasoning" in low and caps.include_reasoning:

@@ -1,0 +1,24 @@
+[server]
+maxUploadSize = 300
+enableXsrfProtection = false
+enableCORS = false
+
+[browser]
+gatherUsageStats = false
+
+# "Midnight Teal" (default). The app's theme switcher layers the other two themes on top with CSS.
+[theme]
+base = "dark"
+primaryColor = "#14A3B8"
+backgroundColor = "#0F1A2B"
+secondaryBackgroundColor = "#16243A"
+textColor = "#E6EDF5"
+borderColor = "#2A3F5F"
+linkColor = "#14A3B8"
+baseRadius = "12px"
+buttonRadius = "12px"
+showWidgetBorder = true
+
+[theme.sidebar]
+backgroundColor = "#16243A"
+secondaryBackgroundColor = "#0F1A2B"
